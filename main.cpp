@@ -1,13 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "huffman.h"
-
-
-#include <queue>
-#include <map>
-#include <climits> // for CHAR_BIT
-#include <iterator>
-#include <algorithm>
+#include "arithmetic.h"
 
 int main(int nargs, char **args)
 {
@@ -31,7 +25,8 @@ int main(int nargs, char **args)
             file.close();
             std::cout << "... " << origSize << " bytes read" << std::endl;
 
-            Huffman compression;
+            //Huffman compression;
+            Arithmetic compression;
             compression.compress(reinterpret_cast<uint8_t *>(data), origSize);
             std::cout << "output size = " << compression.outputSize() << " bytes" << std::endl;
             std::cout << "compress ratio = " << 100 * compression.outputSize() / origSize << "%" << std::endl << std::endl;

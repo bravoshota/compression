@@ -35,12 +35,7 @@ struct Symbol
 
 void Huffman::compress(uint8_t *data, uint32_t size)
 {
-    m_output.resize(0);
-
-    if (data == nullptr)
-        return;
-
-    if (size == 0)
+    if (!init(data, size))
         return;
 
     // initialize symbols
@@ -118,12 +113,6 @@ void Huffman::compress(uint8_t *data, uint32_t size)
 //        }
 //    }
 
-    m_output.reserve(size);
-    m_output.push_back(0);
-
-    const uint8_t oneBit = 128;
-    m_lastBit = 0;
-
     for (uint32_t i = 0; i < size; ++i)
     {
         Symbol*symbol = allSymbols[data[i]];
@@ -132,19 +121,7 @@ void Huffman::compress(uint8_t *data, uint32_t size)
         {
             if (symbol->parent)
             {
-                if (symbol->parent->children[0] != symbol)
-                {
-                    m_output.back() |= (oneBit >> m_lastBit);
-                }
-
-                ++m_lastBit;
-
-                if (m_lastBit == 8)
-                {
-                    m_lastBit = 0;
-                    m_output.push_back(0);
-                }
-
+                addBit(symbol->parent->children[0] != symbol);
                 symbol = symbol->parent;
             }
             else
@@ -152,13 +129,6 @@ void Huffman::compress(uint8_t *data, uint32_t size)
                 break;
             }
         }
-    }
-
-    --m_lastBit;
-    if (m_lastBit == 255)
-    {
-        m_lastBit = 7;
-        m_output.pop_back();
     }
 
     for (auto val : allSymbols)
